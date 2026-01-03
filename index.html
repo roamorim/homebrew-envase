@@ -6,21 +6,24 @@
     <title>Beer Envase Pro</title>
     <style>
         :root { --beer-amber: #ffae00; --dark-bg: #121212; --card-bg: #1e1e1e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); color: white; display: flex; justify-content: center; padding: 15px; }
-        .app-container { background: var(--card-bg); padding: 20px; border-radius: 25px; border: 1px solid #333; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { text-align: center; color: var(--beer-amber); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); color: white; display: flex; justify-content: center; padding: 15px; margin: 0; }
+        .app-container { background: var(--card-bg); padding: 20px; border-radius: 25px; border: 1px solid #333; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 20px; }
+        h2 { text-align: center; color: var(--beer-amber); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 1.4em; }
         
-        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        /* Destaque para o Barril */
+        .full-width { grid-column: span 2; } 
+        
         .input-row { display: flex; flex-direction: column; }
-        label { font-size: 0.75em; color: #888; margin-bottom: 5px; font-weight: bold; }
-        input { padding: 12px; border-radius: 12px; border: 1px solid #444; background: #2b2b2b; color: #fff; font-size: 1.1em; text-align: center; }
-        input:focus { border-color: var(--beer-amber); outline: none; }
+        label { font-size: 0.75em; color: #888; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        input { padding: 12px; border-radius: 12px; border: 1px solid #444; background: #2b2b2b; color: #fff; font-size: 1.1em; text-align: center; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: var(--beer-amber); outline: none; background: #333; }
 
         .priming-section { background: #252525; padding: 15px; border-radius: 15px; border-left: 4px solid var(--beer-amber); margin-bottom: 20px; }
         
         .display { background: var(--beer-amber); color: #000; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(255, 174, 0, 0.3); }
         .display span { font-size: 2.2em; font-weight: 900; display: block; }
-        .display label { color: #443200; margin-bottom: 0; }
+        .display label { color: #443200; margin-bottom: 0; font-size: 0.8em; }
         
         .footer { text-align: center; font-size: 0.7em; color: #555; margin-top: 15px; }
     </style>
@@ -31,6 +34,11 @@
     <h2>🍺 Envase Caseiro</h2>
     
     <div class="grid-inputs">
+        <div class="input-row full-width">
+            <label>🛢️ Barril (Mini Keg) 4 Litros</label>
+            <input type="number" id="b4" placeholder="0" oninput="calc()" style="border-color: #555;">
+        </div>
+
         <div class="input-row">
             <label>Growler 1.9L</label>
             <input type="number" id="g19" placeholder="0" oninput="calc()">
@@ -51,29 +59,31 @@
 
     <div class="priming-section">
         <label>Açúcar (g/Litro):</label>
-        <input type="number" id="sugarRate" value="6" step="0.5" oninput="calc()" style="width: 80%; background: transparent; border: none; border-bottom: 1px solid #555; text-align: left; padding: 5px;">
-        <p style="margin: 10px 0 0 0; font-size: 0.9em;">Total Açúcar: <strong id="totalSugar" style="color:var(--beer-amber)">0g</strong></p>
+        <input type="number" id="sugarRate" value="6" step="0.1" oninput="calc()" style="width: 60px; background: transparent; border: none; border-bottom: 1px solid #555; text-align: left; padding: 5px; display: inline-block;">
+        <p style="margin: 10px 0 0 0; font-size: 0.9em;">Açúcar Total: <strong id="totalSugar" style="color:var(--beer-amber)">0g</strong></p>
     </div>
 
     <div class="display">
-        <label>VOLUME TOTAL NO BALDE</label>
-        <span id="res">0.00 L</span>
+        <label>VOLUME TOTAL ESTIMADO</label>
+        <span id="res">0,00 L</span>
     </div>
 
     <div class="footer">
-        Fórmula: Σ(Qtd * Vol) | 2026 Beer Dev
+        Deploy Automático via GitHub Pages
     </div>
 </div>
 
 <script>
     function calc() {
+        const b4 = (document.getElementById('b4').value || 0) * 4.0;
         const v19 = (document.getElementById('g19').value || 0) * 1.9;
         const v10 = (document.getElementById('g10').value || 0) * 1.0;
         const v600 = (document.getElementById('g600').value || 0) * 0.6;
         const v330 = (document.getElementById('g330').value || 0) * 0.33;
-        const sugarRate = document.getElementById('sugarRate').value || 0;
+        
+        const sugarRate = parseFloat(document.getElementById('sugarRate').value) || 0;
 
-        const totalVol = v19 + v10 + v600 + v330;
+        const totalVol = b4 + v19 + v10 + v600 + v330;
         const totalSugar = totalVol * sugarRate;
 
         document.getElementById('res').innerText = totalVol.toFixed(2).replace('.', ',') + " L";
